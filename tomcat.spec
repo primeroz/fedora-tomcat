@@ -31,7 +31,7 @@
 %global jspspec 2.2
 %global major_version 7
 %global minor_version 0
-%global micro_version 33
+%global micro_version 65
 %global packdname apache-tomcat-%{version}-src
 %global servletspec 3.0
 %global elspec 2.2
@@ -53,13 +53,13 @@
 Name:          tomcat
 Epoch:         0
 Version:       %{major_version}.%{minor_version}.%{micro_version}
-Release:       4%{?dist}
+Release:       1%{?dist}
 Summary:       Apache Servlet/JSP Engine, RI for Servlet %{servletspec}/JSP %{jspspec} API
 
 Group:         System Environment/Daemons
 License:       ASL 2.0
 URL:           http://tomcat.apache.org/
-Source0:       http://archive.apache.org/dist/tomcat/tomcat-%{major_version}/v%{version}/src/%{packdname}.tar.gz
+Source0:       http://www.apache.org/dist/tomcat/tomcat-%{major_version}/v%{version}/src/%{packdname}.tar.gz
 Source1:       %{name}-%{major_version}.%{minor_version}.conf
 Source2:       %{name}-%{major_version}.%{minor_version}.init
 Source3:       %{name}-%{major_version}.%{minor_version}.sysconfig
@@ -79,10 +79,12 @@ Source16:      %{name}-%{major_version}.%{minor_version}-jsvc.wrapper
 
 Patch0:        %{name}-%{major_version}.%{minor_version}-bootstrap-MANIFEST.MF.patch
 Patch1:        %{name}-%{major_version}.%{minor_version}-tomcat-users-webapp.patch
+# Adding patch to remove java 1.8 compiler options due to outdated ecj version in el6
+Patch2:        %{name}-7.0.57-CompilerOptionsV8.patch
+# Adding patch to remove unsupport ant tasks/attributes
+Patch3:        %{name}-7.0.65-build.patch
 
 BuildArch:     noarch
-
-ExcludeArch: ppc64
 
 BuildRequires: ant
 BuildRequires: ant-nodeps
@@ -94,7 +96,7 @@ BuildRequires: jakarta-commons-daemon
 BuildRequires: jakarta-commons-dbcp
 BuildRequires: jakarta-commons-pool
 BuildRequires: jakarta-taglibs-standard
-BuildRequires: java-devel >= 1:1.6.0
+BuildRequires: java7-devel >= 1:1.7.0
 BuildRequires: jpackage-utils >= 0:1.7.0
 BuildRequires: junit
 BuildRequires: log4j
@@ -164,6 +166,7 @@ Summary: Apache Tomcat JSP API implementation classes
 Provides: jsp = %{jspspec}
 Provides: jsp22
 Requires: %{name}-servlet-%{servletspec}-api = %{epoch}:%{version}-%{release}
+Requires: %{name}-el-%{elspec}-api = %{epoch}:%{version}-%{release}
 Requires(post): chkconfig
 Requires(postun): chkconfig
 
@@ -226,11 +229,14 @@ find . -type f \( -name "*.bat" -o -name "*.class" -o -name Thumbs.db -o -name "
 
 %patch0 -p0
 %patch1 -p0
+%patch2 -p0
+%patch3 -p0
+
 %{__ln_s} $(build-classpath jakarta-taglibs-core) webapps/examples/WEB-INF/lib/jstl.jar
 %{__ln_s} $(build-classpath jakarta-taglibs-standard) webapps/examples/WEB-INF/lib/standard.jar
 
 %build
-export OPT_JAR_LIST="ant/ant-trax xalan-j2-serializer"
+export OPT_JAR_LIST="ant/ant-trax ant/ant-nodeps xalan-j2-serializer"
    # we don't care about the tarballs and we're going to replace
    # tomcat-dbcp.jar with jakarta-commons-{collections,dbcp,pool}-tomcat5.jar
    # so just create a dummy file for later removal
@@ -257,6 +263,7 @@ export OPT_JAR_LIST="ant/ant-trax xalan-j2-serializer"
       -Dno.build.dbcp=true \
       -Dversion="%{version}" \
       -Dversion.build="%{micro_version}" \
+      -Djava.7.home=%{java_home} \
       deploy dist-prepare dist-source javadoc
 
     # remove some jars that we'll replace with symlinks later
@@ -526,8 +533,9 @@ fi
 %config(noreplace) %{_sysconfdir}/sysconfig/%{name}
 %attr(0755,root,tomcat) %dir %{basedir}
 %attr(0755,root,tomcat) %dir %{confdir}
+%defattr(0664,tomcat,root,0770)
+%attr(0770,tomcat,root) %dir %{logdir}
 %defattr(0664,root,tomcat,0770)
-%attr(0770,root,tomcat) %dir %{logdir}
 %attr(0660,tomcat,tomcat) %{logdir}/catalina.out
 %attr(0644,tomcat,tomcat) %{_localstatedir}/run/%{name}.pid
 %attr(0770,root,tomcat) %dir %{cachedir}
@@ -622,6 +630,9 @@ fi
 %{_sbindir}/%{name}-jsvc
 
 %changelog
+* Fri Nov 13 2015 Coty Sutherland <csutherl@redhat.com> 0:7.0.65-1
+- Updated to 7.0.65
+
 * Tue Apr 29 2014 Vlad Slepukhin <slp.vld@gmail.com> 0:7.0.33-4
 - Fixed bug not allowing Tomcat to start properly connected with access privleges to the logging directory
 - Removed residual systemd configuration from the wrapper
