@@ -1,0 +1,109 @@
+--- java/org/apache/jasper/compiler/JDTCompiler.java.orig	2014-11-18 14:29:02.146042000 -0500
++++ java/org/apache/jasper/compiler/JDTCompiler.java	2014-11-18 14:31:41.851597000 -0500
+@@ -67,7 +67,6 @@
+     /** 
+      * Compile the servlet from .java file to .class file
+      */
+-    @Override
+     protected void generateClass(String[] smap)
+         throws FileNotFoundException, JasperException, Exception {
+ 
+@@ -98,12 +97,10 @@
+                 this.sourceFile = sourceFile;
+             }
+ 
+-            @Override
+             public char[] getFileName() {
+                 return sourceFile.toCharArray();
+             }
+             
+-            @Override
+             public char[] getContents() {
+                 char[] result = null;
+                 FileInputStream is = null;
+@@ -145,7 +142,6 @@
+                 return result;
+             }
+             
+-            @Override
+             public char[] getMainTypeName() {
+                 int dot = className.lastIndexOf('.');
+                 if (dot > 0) {
+@@ -154,7 +150,6 @@
+                 return className.toCharArray();
+             }
+             
+-            @Override
+             public char[][] getPackageName() {
+                 StringTokenizer izer = 
+                     new StringTokenizer(className, ".");
+@@ -166,7 +161,6 @@
+                 return result;
+             }
+ 
+-            @Override
+             public boolean ignoreOptionalProblems() {
+                 return false;
+             }
+@@ -174,7 +168,6 @@
+ 
+         final INameEnvironment env = new INameEnvironment() {
+ 
+-                @Override
+                 public NameEnvironmentAnswer 
+                     findType(char[][] compoundTypeName) {
+                     String result = "";
+@@ -187,7 +180,6 @@
+                     return findType(result);
+                 }
+ 
+-                @Override
+                 public NameEnvironmentAnswer 
+                     findType(char[] typeName, 
+                              char[][] packageName) {
+@@ -269,7 +261,6 @@
+                     }
+                 }
+ 
+-                @Override
+                 public boolean isPackage(char[][] parentPackageName, 
+                                          char[] packageName) {
+                     String result = "";
+@@ -293,7 +284,6 @@
+                     return isPackage(result);
+                 }
+ 
+-                @Override
+                 public void cleanup() {
+                 }
+ 
+@@ -342,9 +332,6 @@
+             } else if(opt.equals("1.7")) {
+                 settings.put(CompilerOptions.OPTION_Source,
+                              CompilerOptions.VERSION_1_7);
+-            } else if(opt.equals("1.8")) {
+-                settings.put(CompilerOptions.OPTION_Source,
+-                             CompilerOptions.VERSION_1_8);
+             } else {
+                 log.warn("Unknown source VM " + opt + " ignored.");
+                 settings.put(CompilerOptions.OPTION_Source,
+@@ -386,11 +373,6 @@
+                              CompilerOptions.VERSION_1_7);
+                 settings.put(CompilerOptions.OPTION_Compliance,
+                         CompilerOptions.VERSION_1_7);
+-            } else if(opt.equals("1.8")) {
+-                settings.put(CompilerOptions.OPTION_TargetPlatform,
+-                             CompilerOptions.VERSION_1_8);
+-                settings.put(CompilerOptions.OPTION_Compliance,
+-                        CompilerOptions.VERSION_1_8);
+             } else {
+                 log.warn("Unknown target VM " + opt + " ignored.");
+                 settings.put(CompilerOptions.OPTION_TargetPlatform,
+@@ -408,7 +390,6 @@
+             new DefaultProblemFactory(Locale.getDefault());
+         
+         final ICompilerRequestor requestor = new ICompilerRequestor() {
+-                @Override
+                 public void acceptResult(CompilationResult result) {
+                     try {
+                         if (result.hasProblems()) {
