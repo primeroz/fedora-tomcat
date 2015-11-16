@@ -1,0 +1,53 @@
+--- build.xml	2015-12-11 07:27:23.026996172 -0500
++++ build.xml	2015-12-11 07:29:46.762002209 -0500
+@@ -1042,12 +1042,11 @@
+     </copy>
+ 
+     <!-- Delete all other versions of Eclipse JDT Compiler and copy the current one -->
+-    <local name="jdt.jar.filename" />
+-    <basename property="jdt.jar.filename" file="${jdt.jar}"/>
++    <basename property="deploy.jdt.jar.filename" file="${jdt.jar}"/>
+     <delete verbose="true">
+       <fileset dir="${tomcat.build}/lib">
+         <include name="ecj-*.jar"/>
+-        <exclude name="${jdt.jar.filename}"/>
++        <exclude name="${deploy.jdt.jar.filename}"/>
+       </fileset>
+     </delete>
+     <copy file="${jdt.jar}" todir="${tomcat.build}/lib"/>
+@@ -2826,7 +2825,7 @@ Apache Tomcat ${version} native binaries
+     <local name="temp.file"/>
+     <mkdir dir="${base.path}"/>
+     <tempfile property="temp.file" destdir="${base.path}" prefix="download-"/>
+-    <get src="${sourcefile}" httpusecaches="${trydownload.httpusecaches}" dest="${temp.file}.tar.gz" />
++    <get src="${sourcefile}" dest="${temp.file}.tar.gz" />
+     <gunzip src="${temp.file}.tar.gz" dest="${temp.file}.tar"/>
+     <untar src="${temp.file}.tar" dest="${base.path}"/>
+     <delete file="${temp.file}.tar"/>
+@@ -2857,7 +2856,7 @@ Apache Tomcat ${version} native binaries
+     <local name="temp.file"/>
+     <mkdir dir="${base.path}"/>
+     <tempfile property="temp.file" destdir="${base.path}" prefix="download-" suffix=".zip"/>
+-    <get src="${sourcefile}" httpusecaches="${trydownload.httpusecaches}" dest="${temp.file}"/>
++    <get src="${sourcefile}" dest="${temp.file}"/>
+     <mkdir dir="${destdir}"/>
+     <unzip src="${temp.file}" dest="${destdir}"/>
+     <delete file="${temp.file}"/>
+@@ -2886,7 +2885,7 @@ Apache Tomcat ${version} native binaries
+     <local name="temp.file"/>
+     <mkdir dir="${base.path}"/>
+     <tempfile property="temp.file" destdir="${base.path}" prefix="download-" suffix=".tmp"/>
+-    <get src="${sourcefile}" httpusecaches="${trydownload.httpusecaches}" dest="${temp.file}"/>
++    <get src="${sourcefile}" dest="${temp.file}"/>
+     <mkdir dir="${destdir}"/>
+     <move file="${temp.file}" tofile="${destfile}"/>
+   </target>
+@@ -2927,7 +2926,7 @@ Apache Tomcat ${version} native binaries
+ 
+   <target name="trydownload" if="trydownload.run" depends="trydownload.check">
+     <!-- Downloads a file if not yet downloaded and the source URL is available -->
+-    <get src="${sourcefile}" httpusecaches="${trydownload.httpusecaches}" dest="${destfile}" />
++    <get src="${sourcefile}" dest="${destfile}" />
+   </target>
+ 
+   <!-- ============================ IDE Support ============================ -->
