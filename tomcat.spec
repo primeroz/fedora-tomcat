@@ -81,6 +81,8 @@ Patch0:        %{name}-%{major_version}.%{minor_version}-bootstrap-MANIFEST.MF.p
 Patch1:        %{name}-%{major_version}.%{minor_version}-tomcat-users-webapp.patch
 # Adding patch to remove java 1.8 compiler options due to outdated ecj version in el6
 Patch2:        %{name}-7.0.57-CompilerOptionsV8.patch
+# Adding patch to remove unsupport ant tasks/attributes
+Patch3:        %{name}-7.0.65-build.patch
 
 BuildArch:     noarch
 
@@ -94,7 +96,7 @@ BuildRequires: jakarta-commons-daemon
 BuildRequires: jakarta-commons-dbcp
 BuildRequires: jakarta-commons-pool
 BuildRequires: jakarta-taglibs-standard
-BuildRequires: java-devel >= 1:1.6.0
+BuildRequires: java7-devel >= 1:1.7.0
 BuildRequires: jpackage-utils >= 0:1.7.0
 BuildRequires: junit
 BuildRequires: log4j
@@ -228,6 +230,7 @@ find . -type f \( -name "*.bat" -o -name "*.class" -o -name Thumbs.db -o -name "
 %patch0 -p0
 %patch1 -p0
 %patch2 -p0
+%patch3 -p0
 
 %{__ln_s} $(build-classpath jakarta-taglibs-core) webapps/examples/WEB-INF/lib/jstl.jar
 %{__ln_s} $(build-classpath jakarta-taglibs-standard) webapps/examples/WEB-INF/lib/standard.jar
