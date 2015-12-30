@@ -236,7 +236,7 @@ find . -type f \( -name "*.bat" -o -name "*.class" -o -name Thumbs.db -o -name "
 %{__ln_s} $(build-classpath jakarta-taglibs-standard) webapps/examples/WEB-INF/lib/standard.jar
 
 %build
-export OPT_JAR_LIST="ant/ant-trax xalan-j2-serializer"
+export OPT_JAR_LIST="ant/ant-trax ant/ant-nodeps xalan-j2-serializer"
    # we don't care about the tarballs and we're going to replace
    # tomcat-dbcp.jar with jakarta-commons-{collections,dbcp,pool}-tomcat5.jar
    # so just create a dummy file for later removal
