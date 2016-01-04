@@ -86,6 +86,8 @@ Patch3:        %{name}-7.0.65-build.patch
 
 BuildArch:     noarch
 
+ExcludeArch: ppc64
+
 BuildRequires: ant
 BuildRequires: ant-nodeps
 BuildRequires: ant-trax
