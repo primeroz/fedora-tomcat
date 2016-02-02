@@ -53,7 +53,7 @@
 Name:          tomcat
 Epoch:         0
 Version:       %{major_version}.%{minor_version}.%{micro_version}
-Release:       1%{?dist}
+Release:       2%{?dist}
 Summary:       Apache Servlet/JSP Engine, RI for Servlet %{servletspec}/JSP %{jspspec} API
 
 Group:         System Environment/Daemons
@@ -76,6 +76,9 @@ Source13:      jasper-OSGi-MANIFEST.MF
 Source14:      tomcat-api-OSGi-MANIFEST.MF
 Source15:      tomcat-juli-OSGi-MANIFEST.MF
 Source16:      %{name}-%{major_version}.%{minor_version}-jsvc.wrapper
+# Updated juli jars needed for log4j
+Source17:      tomcat-juli-adapters.jar
+Source18:      tomcat-juli.jar
 
 Patch0:        %{name}-%{major_version}.%{minor_version}-bootstrap-MANIFEST.MF.patch
 Patch1:        %{name}-%{major_version}.%{minor_version}-tomcat-users-webapp.patch
@@ -397,6 +400,12 @@ pushd ${RPM_BUILD_ROOT}%{libdir}
 
     # Temporary copy the juli jar here from /usr/share/java/tomcat (for maven depmap)
     %{__cp} -a ${RPM_BUILD_ROOT}%{bindir}/tomcat-juli.jar ./
+
+    %{__mkdir} extras
+    pushd extras
+        %{__cp} -p %{SOURCE17} .
+        %{__cp} -p %{SOURCE18} .
+    popd
 popd
 
 # symlink to the FHS locations where we've installed things
@@ -632,6 +641,10 @@ fi
 %{_sbindir}/%{name}-jsvc
 
 %changelog
+* Tue Feb 2 2016 Coty Sutherland <csutherl@redhat.com> 0:7.0.65-2
+- Resolves: rhbz-1171292 tomcat package is missing extras/tomcat-juli.jar and extras/tomcat-juli-adapters.jar 
+  required for log4j 
+
 * Fri Nov 13 2015 Coty Sutherland <csutherl@redhat.com> 0:7.0.65-1
 - Updated to 7.0.65
 
