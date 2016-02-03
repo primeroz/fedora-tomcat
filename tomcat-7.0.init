@@ -69,6 +69,8 @@ TOMCAT_USER="${TOMCAT_USER:-tomcat}"
 # Define the tomcat log file
 TOMCAT_LOG="${TOMCAT_LOG:-${CATALINA_HOME}/logs/${NAME}-initd.log}"
 
+# Define the tomcat pid file
+CATALINA_PID="${CATALINA_PID:-/var/run/${NAME}.pid}"
 
 RETVAL="0"
 
@@ -149,8 +151,8 @@ function start() {
      return
    fi
    if [ -f "/var/lock/subsys/${NAME}" ]; then
-        if [ -s "/var/run/${NAME}.pid" ]; then
-            read kpid < /var/run/${NAME}.pid
+        if [ -s "$CATALINA_PID" ]; then
+            read kpid < $CATALINA_PID
 #           if checkpid $kpid 2>&1; then
             if [ -d "/proc/${kpid}" ]; then
                 log_success_msg
@@ -162,7 +164,6 @@ function start() {
         fi
     fi
     # fix permissions on the log and pid files
-    export CATALINA_PID="/var/run/${NAME}.pid"
     touch $CATALINA_PID 2>&1 || RETVAL="4"
     if [ "$RETVAL" -eq "0" -a "$?" -eq "0" ]; then 
       chown ${TOMCAT_USER}:${TOMCAT_USER} $CATALINA_PID
@@ -210,8 +211,8 @@ function stop() {
       fi
       if [ "$RETVAL" -eq "0" ]; then
          count="0"
-         if [ -s "/var/run/${NAME}.pid" ]; then
-            read kpid < /var/run/${NAME}.pid
+         if [ -s "$CATALINA_PID" ]; then
+            read kpid < $CATALINA_PID
             until [ "$(ps --pid $kpid | grep -c $kpid)" -eq "0" ] || \
                       [ "$count" -gt "$SHUTDOWN_WAIT" ]; do
                     if [ "$SHUTDOWN_VERBOSE" = "true" ]; then
@@ -228,7 +229,7 @@ function stop() {
                 fi
                 log_success_msg
             fi
-            rm -f /var/lock/subsys/${NAME} /var/run/${NAME}.pid
+            rm -f /var/lock/subsys/${NAME} $CATALINA_PID
         else
             log_failure_msg
             RETVAL="4"
@@ -262,7 +263,7 @@ case "$1" in
         start
         ;;
     condrestart|try-restart)
-        if [ -s "/var/run/${NAME}.pid" ]; then
+        if [ -s "$CATALINA_PID" ]; then
             stop
             start
         fi
@@ -271,14 +272,14 @@ case "$1" in
         RETVAL="3"
         ;;
     force-reload)
-        if [ -s "/var/run/${NAME}.pid" ]; then
+        if [ -s "$CATALINA_PID" ]; then
             stop
             start
         fi
         ;;
     status)
-        if [ -s "/var/run/${NAME}.pid" ]; then
-            read kpid < /var/run/${NAME}.pid
+        if [ -s "$CATALINA_PID" ]; then
+            read kpid < $CATALINA_PID
             if [ -d "/proc/${kpid}" ]; then
                 log_success_msg "${NAME} (pid ${kpid}) is running..."
                 RETVAL="0"
