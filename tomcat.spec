@@ -53,7 +53,7 @@
 Name:          tomcat
 Epoch:         0
 Version:       %{major_version}.%{minor_version}.%{micro_version}
-Release:       1%{?dist}
+Release:       2%{?dist}
 Summary:       Apache Servlet/JSP Engine, RI for Servlet %{servletspec}/JSP %{jspspec} API
 
 Group:         System Environment/Daemons
@@ -500,9 +500,11 @@ EOF
 
 %preun
 # clean tempdir and workdir on removal or upgrade
-%{_initrddir}/%{name} stop >/dev/null 2>&1
-/sbin/chkconfig --del %{name}
 %{__rm} -rf %{workdir}/* %{tempdir}/*
+if [ "$1" = "0" ]; then
+    %{_initrddir}/%{name} stop >/dev/null 2>&1
+    /sbin/chkconfig --del %{name}
+fi
 
 %postun jsp-%{jspspec}-api
 if [ "$1" = "0" ]; then
@@ -632,6 +634,9 @@ fi
 %{_sbindir}/%{name}-jsvc
 
 %changelog
+* Mon Mar 28 2016 Coty Sutherland <csutherl@redhat.com> 0:7.0.65-2
+* Resolved: rhbz-1311499 Updating package causes tomcat to not start on boot
+
 * Fri Nov 13 2015 Coty Sutherland <csutherl@redhat.com> 0:7.0.65-1
 - Updated to 7.0.65
 
