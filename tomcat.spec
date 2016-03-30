@@ -53,7 +53,7 @@
 Name:          tomcat
 Epoch:         0
 Version:       %{major_version}.%{minor_version}.%{micro_version}
-Release:       1%{?dist}
+Release:       2%{?dist}
 Summary:       Apache Servlet/JSP Engine, RI for Servlet %{servletspec}/JSP %{jspspec} API
 
 Group:         System Environment/Daemons
@@ -632,6 +632,9 @@ fi
 %{_sbindir}/%{name}-jsvc
 
 %changelog
+* Wed Mar 30 2016 Coty Sutherland <csutherl@redhat.com> 0:7.0.65-2
+- Resolved: rhbz#1314177 Tomcat init script reports wrong status when one instance of several is stopped
+
 * Fri Nov 13 2015 Coty Sutherland <csutherl@redhat.com> 0:7.0.65-1
 - Updated to 7.0.65
 
