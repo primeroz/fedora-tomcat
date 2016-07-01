@@ -339,7 +339,7 @@ pushd output/build
     %{__cp} -a webapps/* ${RPM_BUILD_ROOT}%{appdir}
 popd
 # javadoc
-%{__cp} -a webapps/docs/api/* ${RPM_BUILD_ROOT}%{_javadocdir}/%{name}
+%{__cp} -a output/dist/webapps/docs/api/* ${RPM_BUILD_ROOT}%{_javadocdir}/%{name}
 
 %{__sed} -e "s|\@\@\@TCHOME\@\@\@|%{homedir}|g" \
    -e "s|\@\@\@TCTEMP\@\@\@|%{tempdir}|g" \
@@ -632,6 +632,9 @@ fi
 %{_sbindir}/%{name}-jsvc
 
 %changelog
+* Fri Jul 01 2016 Coty Sutherland <csutherl@redhat.com> 0:7.0.65-2
+- Resolves: rhbz#1352120 The javadoc package is useless; it contains one index.html
+
 * Fri Nov 13 2015 Coty Sutherland <csutherl@redhat.com> 0:7.0.65-1
 - Updated to 7.0.65
 
