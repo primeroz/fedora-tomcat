@@ -57,7 +57,7 @@
 Name:          tomcat
 Epoch:         1
 Version:       %{major_version}.%{minor_version}.%{micro_version}
-Release:       4%{?dist}
+Release:       5%{?dist}
 Summary:       Apache Servlet/JSP Engine, RI for Servlet %{servletspec}/JSP %{jspspec} API
 
 Group:         System Environment/Daemons
@@ -593,8 +593,8 @@ fi
 %defattr(0664,tomcat,root,0770)
 %attr(0770,tomcat,root) %dir %{logdir}
 %defattr(0664,root,tomcat,0770)
-%attr(0660,tomcat,tomcat) %{logdir}/catalina.out
-%attr(0644,tomcat,tomcat) %{_localstatedir}/run/%{name}.pid
+%attr(0660,tomcat,tomcat) %verify(not size md5 mtime) %{logdir}/catalina.out
+%attr(0644,tomcat,tomcat) %verify(not size md5 mtime) %{_localstatedir}/run/%{name}.pid
 %attr(0770,root,tomcat) %dir %{cachedir}
 %attr(0770,root,tomcat) %dir %{tempdir}
 %attr(0770,root,tomcat) %dir %{workdir}
@@ -679,6 +679,9 @@ fi
 %attr(0644,root,root) %{_unitdir}/%{name}-jsvc.service
 
 %changelog
+* Fri Jul 01 2016 Coty Sutherland <csutherl@redhat.com> - 1:8.0.32-5
+- Resolves: rhbz#1341853 rpm -V tomcat fails on /var/log/tomcat/catalina.out
+
 * Wed Mar 2 2016 Ivan Afonichev <ivan.afonichev@gmail.com> - 1:8.0.32-4
 - Revert sysconfig migration changes, resolves: rhbz#1311771, rhbz#1311905
 - Add /etc/tomcat/conf.d/ with shell expansion support, resolves rhbz#1293636
