@@ -29,8 +29,10 @@
 # Use JAVA_OPTS to set java.library.path for libtcnative.so
 #JAVA_OPTS="-Djava.library.path=@@@LIBDIR@@@"
 
-# What user should run tomcat
+# What user and group should run tomcat
+# GROUP will default to TOMCAT_USER if not defined
 #TOMCAT_USER="tomcat"
+#TOMCAT_GROUP="tomcat"
 
 # You can change your tomcat locale here
 #LANG="en_US"

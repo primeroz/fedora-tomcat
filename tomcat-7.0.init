@@ -62,9 +62,10 @@ TOMCAT_SCRIPT="/usr/sbin/tomcat"
 
 # Tomcat program name
 TOMCAT_PROG="${NAME}"
-        
+
 # Define the tomcat username
 TOMCAT_USER="${TOMCAT_USER:-tomcat}"
+TOMCAT_GROUP="${TOMCAT_GROUP:-$TOMCAT_USER}"
 
 # Define the tomcat log file
 TOMCAT_LOG="${TOMCAT_LOG:-${CATALINA_HOME}/logs/${NAME}-initd.log}"
@@ -120,7 +121,7 @@ function makeHomeDir() {
         cp -pLR /usr/share/${NAME}/conf $CATALINA_HOME
         ln -fs /usr/share/java/tomcat ${CATALINA_HOME}/lib
         ln -fs /usr/share/tomcat/webapps ${CATALINA_HOME}/webapps
-        chown ${TOMCAT_USER}:${TOMCAT_USER} /var/log/${NAME}
+        chown ${TOMCAT_USER}:${TOMCAT_GROUP} /var/log/${NAME}
     fi
 }
 
@@ -132,7 +133,7 @@ function parseOptions() {
              )"
     if [ -r "/etc/sysconfig/${NAME}" ]; then
         options="$options $(
-                     awk '!/^#/ && !/^$/ { ORS=" "; 
+                     awk '!/^#/ && !/^$/ { ORS=" ";
                                            print "export ", $0, ";" }' \
                      /etc/sysconfig/${NAME}
                  )"
@@ -142,9 +143,9 @@ function parseOptions() {
 
 # See how we were called.
 function start() {
-  
+
    echo -n "Starting ${TOMCAT_PROG}: "
-   if [ "$RETVAL" != "0" ]; then 
+   if [ "$RETVAL" != "0" ]; then
      log_failure_msg
      return
    fi
@@ -164,12 +165,12 @@ function start() {
     # fix permissions on the log and pid files
     export CATALINA_PID="/var/run/${NAME}.pid"
     touch $CATALINA_PID 2>&1 || RETVAL="4"
-    if [ "$RETVAL" -eq "0" -a "$?" -eq "0" ]; then 
-      chown ${TOMCAT_USER}:${TOMCAT_USER} $CATALINA_PID
-    fi
-    [ "$RETVAL" -eq "0" ] && touch $TOMCAT_LOG 2>&1 || RETVAL="4" 
     if [ "$RETVAL" -eq "0" -a "$?" -eq "0" ]; then
-      chown ${TOMCAT_USER}:${TOMCAT_USER} $TOMCAT_LOG
+      chown ${TOMCAT_USER}:${TOMCAT_GROUP} $CATALINA_PID
+    fi
+    [ "$RETVAL" -eq "0" ] && touch $TOMCAT_LOG 2>&1 || RETVAL="4"
+    if [ "$RETVAL" -eq "0" -a "$?" -eq "0" ]; then
+      chown ${TOMCAT_USER}:${TOMCAT_GROUP} $TOMCAT_LOG
     fi
     if [ "$CATALINA_HOME" != "/usr/share/tomcat" -a "$RETVAL" -eq "0" ]; then
         # Create a tomcat directory if it doesn't exist
@@ -186,10 +187,10 @@ function start() {
         $SU - $TOMCAT_USER -c "${TOMCAT_SCRIPT} start-security" \
             >> ${TOMCAT_LOG} 2>&1 || RETVAL="4"
     else
-       
+
        [ "$RETVAL" -eq "0" ] && $SU - $TOMCAT_USER -c "${TOMCAT_SCRIPT} start" >> ${TOMCAT_LOG} 2>&1 || RETVAL="4"
     fi
-    if [ "$RETVAL" -eq "0" ]; then 
+    if [ "$RETVAL" -eq "0" ]; then
         log_success_msg
         touch /var/lock/subsys/${NAME}
     else
@@ -288,7 +289,7 @@ case "$1" in
                RETVAL="1"
             fi
         else
-            pid="$(/usr/bin/pgrep -d , -u ${TOMCAT_USER} -G ${TOMCAT_USER} java)"
+            pid="$(/usr/bin/pgrep -d , -u ${TOMCAT_USER} -G ${TOMCAT_GROUP} java)"
             if [ -z "$pid" ]; then
 #               status ${NAME}
 #               RETVAL="$?"
@@ -300,7 +301,7 @@ case "$1" in
             fi
         fi
          if [ -f /var/lock/subsys/${NAME} ]; then
-            pid="$(/usr/bin/pgrep -d , -u ${TOMCAT_USER} -G ${TOMCAT_USER} java)"
+            pid="$(/usr/bin/pgrep -d , -u ${TOMCAT_USER} -G ${TOMCAT_GROUP} java)"
 # The lockfile exists but the process is not running
             if [ -z "$pid" ]; then
                log_failure_msg "${NAME} lockfile exists but process is not running"
