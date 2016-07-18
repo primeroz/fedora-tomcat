@@ -536,7 +536,7 @@ fi
 %attr(0755,root,tomcat) %dir %{basedir}
 %attr(0755,root,tomcat) %dir %{confdir}
 %defattr(0664,tomcat,root,0770)
-%attr(0770,tomcat,root) %dir %{logdir}
+%attr(0770,root,tomcat) %dir %{logdir}
 %defattr(0664,root,tomcat,0770)
 %attr(0660,tomcat,tomcat) %{logdir}/catalina.out
 %attr(0644,tomcat,tomcat) %{_localstatedir}/run/%{name}.pid
