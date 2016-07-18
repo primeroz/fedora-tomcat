@@ -31,7 +31,7 @@
 %global jspspec 2.2
 %global major_version 7
 %global minor_version 0
-%global micro_version 65
+%global micro_version 70
 %global packdname apache-tomcat-%{version}-src
 %global servletspec 3.0
 %global elspec 2.2
@@ -80,9 +80,9 @@ Source16:      %{name}-%{major_version}.%{minor_version}-jsvc.wrapper
 Patch0:        %{name}-%{major_version}.%{minor_version}-bootstrap-MANIFEST.MF.patch
 Patch1:        %{name}-%{major_version}.%{minor_version}-tomcat-users-webapp.patch
 # Adding patch to remove java 1.8 compiler options due to outdated ecj version in el6
-Patch2:        %{name}-7.0.57-CompilerOptionsV8.patch
+Patch2:        %{name}-7.0.70-CompilerOptionsV8.patch
 # Adding patch to remove unsupport ant tasks/attributes
-Patch3:        %{name}-7.0.65-build.patch
+Patch3:        %{name}-7.0.70-build.patch
 
 BuildArch:     noarch
 
@@ -632,6 +632,9 @@ fi
 %{_sbindir}/%{name}-jsvc
 
 %changelog
+* Fri Jul 01 2016 Coty Sutherland <csutherl@redhat.com> 0:7.0.70-1
+- Updated to 7.0.70
+
 * Fri Nov 13 2015 Coty Sutherland <csutherl@redhat.com> 0:7.0.65-1
 - Updated to 7.0.65
 

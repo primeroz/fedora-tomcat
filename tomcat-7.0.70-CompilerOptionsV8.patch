@@ -1,5 +1,5 @@
---- java/org/apache/jasper/compiler/JDTCompiler.java.orig	2014-11-18 14:29:02.146042000 -0500
-+++ java/org/apache/jasper/compiler/JDTCompiler.java	2014-11-18 14:31:41.851597000 -0500
+--- java/org/apache/jasper/compiler/JDTCompiler.java~   2016-06-16 09:53:52.793827761 -0400
++++ java/org/apache/jasper/compiler/JDTCompiler.java    2016-06-16 09:59:29.809134932 -0400
 @@ -67,7 +67,6 @@
      /** 
       * Compile the servlet from .java file to .class file
@@ -52,9 +52,9 @@
 -                @Override
                  public NameEnvironmentAnswer 
                      findType(char[][] compoundTypeName) {
-                     String result = "";
+                     StringBuilder result = new StringBuilder();
 @@ -187,7 +180,6 @@
-                     return findType(result);
+                     return findType(result.toString());
                  }
  
 -                @Override
@@ -68,16 +68,16 @@
 -                @Override
                  public boolean isPackage(char[][] parentPackageName, 
                                           char[] packageName) {
-                     String result = "";
-@@ -293,7 +284,6 @@
-                     return isPackage(result);
+                     StringBuilder result = new StringBuilder();
+@@ -291,7 +282,6 @@
+                     return isPackage(result.toString());
                  }
  
 -                @Override
                  public void cleanup() {
                  }
  
-@@ -342,9 +332,6 @@
+@@ -340,9 +330,6 @@
              } else if(opt.equals("1.7")) {
                  settings.put(CompilerOptions.OPTION_Source,
                               CompilerOptions.VERSION_1_7);
@@ -87,7 +87,7 @@
              } else {
                  log.warn("Unknown source VM " + opt + " ignored.");
                  settings.put(CompilerOptions.OPTION_Source,
-@@ -386,11 +373,6 @@
+@@ -384,11 +371,6 @@
                               CompilerOptions.VERSION_1_7);
                  settings.put(CompilerOptions.OPTION_Compliance,
                          CompilerOptions.VERSION_1_7);
@@ -99,7 +99,7 @@
              } else {
                  log.warn("Unknown target VM " + opt + " ignored.");
                  settings.put(CompilerOptions.OPTION_TargetPlatform,
-@@ -408,7 +390,6 @@
+@@ -406,7 +388,6 @@
              new DefaultProblemFactory(Locale.getDefault());
          
          final ICompilerRequestor requestor = new ICompilerRequestor() {
